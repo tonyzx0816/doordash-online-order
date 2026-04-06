@@ -25,6 +25,8 @@ public class RestaurantService {
    public List<RestaurantDto> getRestaurants() {
        List<RestaurantEntity> restaurantEntities = restaurantRepository.findAll();
        List<MenuItemEntity> menuItemEntities = menuItemRepository.findAll();
+
+       // mapping a restaurant id with its list of menu item dto
        Map<Long, List<MenuItemDto>> groupedMenuItems = new HashMap<>();
        for (MenuItemEntity menuItemEntity : menuItemEntities) {
             List<MenuItemDto> group = groupedMenuItems.computeIfAbsent(menuItemEntity.restaurantId(), k -> new ArrayList<>());
@@ -32,6 +34,7 @@ public class RestaurantService {
             group.add(menuItemDto);
        }
 
+       // converting restaurant entity to restaurant dto with its list of menu item dtos
        List<RestaurantDto> results = new ArrayList<>();
        for(RestaurantEntity restaurantEntity : restaurantEntities){
            RestaurantDto restaurantDto = new RestaurantDto(restaurantEntity, groupedMenuItems.get(restaurantEntity.id()));
@@ -39,5 +42,4 @@ public class RestaurantService {
        }
        return results;
    }
-
 }
